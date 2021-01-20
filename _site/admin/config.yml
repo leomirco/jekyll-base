@@ -4,9 +4,16 @@ backend:
   name: git-gateway
   branch: master # Branch to update (optional; defaults to master)
 publish_mode: editorial_workflow
+# when using the default proxy server port
+local_backend: true
 
 # This line should *not* be indented
 media_folder: "assets/uploads"
+public_folder: "/images/uploads"
+# lingua UI
+locale: 'it'
+# logo
+logo_url: https://tiledesk.com/wp-content/uploads/2020/08/tiledesk-logo_x4_vpadding.png
 collections:
   - name: "blog"
     label: "Blog"
@@ -15,10 +22,20 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
     editor:
       preview: false
+    # updated fields in blog collection configuration
     fields: # The fields for each document, usually in front matter
       - { label: "Layout", name: "layout", widget: "hidden", default: "post" }
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { 
+          label: "Author",
+          name: "author",
+          widget: "relation",
+          collection: "authors",
+          displayFields: [display_name],
+          searchFields: [display_name],
+          valueField: "name",
+        }
       - { label: "Body", name: "body", widget: "markdown" }
   - name: "authors"
     label: "Authors"
@@ -32,13 +49,32 @@ collections:
       - { label: "Diplay Name", name: "display_name", widget: "string" }
       - { label: "Position", name: "position", widget: "string" }
       - { label: "Body", name: "body", widget: "markdown" }
-  - name: "posts"
-    label: "Post"
-    folder: "_posts"
-    filter:
-      field: language
-      value: en
-    fields:
-      - {label: "Language", name: "language"}
-
-  
+  - name: "pages"
+    label: "Pages"
+    editor:
+      preview: false
+    files:
+      - label: "About Page"
+        name: "about"
+        file: "about.md"
+        fields:
+          - { label: "Title", name: "title", widget: "hidden", default: "about" }
+          - { label: "Layout", name: "layout", widget: "hidden", default: "about" }
+          - { label: "Body", name: "body", widget: "markdown" }
+  - name: "config"
+    label: "Config"
+    editor:
+      preview: false
+    files:
+      - label: "Navigation"
+        name: "navigation"
+        file: "_data/navigation.yml"
+        fields:
+          - {
+              label: "Navigation Items",
+              name: "items",
+              widget: "list",
+              # fields:
+              #  - { label: "Link", name: "link", widget: "string" }
+              #  - { label: "Name", name: "name", widget: "string" }
+            }
